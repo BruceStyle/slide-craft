@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>栖霜冷链 · 示例 deck(虚构)</title>
+<style>
+  :root{ --bg:#F7F6F2; --ink:#14202B; --muted:#5E6A73; --line:#D6DADB;
+         --accent:#1B4BB8; --hl:#CFDDF8; --hl2:#EAF0FB; --night:#0F1B2D; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#111;overflow:hidden;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+  #stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center}
+  .slide{position:absolute;inset:0;display:none;overflow:hidden;
+    background:var(--bg);color:var(--ink);padding:56px 68px}
+  .slide.active{display:block}
+  .mono{font-family:Menlo,Consolas,"DejaVu Sans Mono",monospace}
+  .serif{font-family:Georgia,"Times New Roman","Liberation Serif",serif}
+  .hd{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:2px solid var(--ink);padding-bottom:14px;font-size:14px}
+  .hd .r{font-family:Menlo,Consolas,"DejaVu Sans Mono",monospace;font-size:12px;letter-spacing:.08em}
+  .ft{position:absolute;left:68px;right:68px;bottom:22px;display:flex;gap:18px;
+    font-size:11px;color:var(--muted);align-items:baseline}
+  .ft .m{letter-spacing:.1em;font-family:Menlo,Consolas,"DejaVu Sans Mono",monospace}
+  .tag{position:absolute;right:68px;top:104px;font-size:11px;letter-spacing:.14em;color:var(--muted);
+    font-family:Menlo,Consolas,"DejaVu Sans Mono",monospace}
+  h1{font-size:50px;line-height:1.2;font-weight:700;letter-spacing:.01em;margin-top:38px}
+  .lead{font-size:17px;color:var(--muted);margin-top:10px;line-height:1.6}
+  .hl{box-shadow:inset 0 -.4em 0 var(--hl)}
+  .banner{position:absolute;left:68px;right:68px;bottom:52px;background:var(--accent);color:#fff;
+    padding:15px 22px;font-size:18px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+  .banner .mono{font-size:11px;letter-spacing:.14em;opacity:.75;font-weight:400}
+  .num{font-family:Georgia,"Times New Roman","Liberation Serif",serif;color:var(--ink);line-height:1}
+  .lab{font-family:Menlo,Consolas,"DejaVu Sans Mono",monospace;font-size:10.5px;letter-spacing:.14em;color:var(--muted);margin-top:8px}
+
+  /* P1 / P6 封面封底 */
+  .cover{background:var(--night);color:#fff;padding:56px 68px}
+  .cover .top{display:flex;justify-content:space-between;font-family:Menlo,Consolas,"DejaVu Sans Mono",monospace;
+    font-size:12px;letter-spacing:.16em;color:#9FB0C8}
+  .cover h1{font-size:84px;line-height:1.16;margin-top:150px;letter-spacing:.02em}
+  .cover .hl{box-shadow:inset 0 -.36em 0 var(--accent)}
+  .cover .sub{position:absolute;left:68px;bottom:60px;font-size:17px;color:#C6D2E3;line-height:1.7}
+  .cover .ghost{position:absolute;right:52px;bottom:26px;font-family:Georgia,"Times New Roman","Liberation Serif",serif;
+    font-size:330px;line-height:1;color:transparent;-webkit-text-stroke:1.5px #2C4466;letter-spacing:-.02em}
+
+  /* P2 四答 */
+  .four{display:grid;grid-template-columns:repeat(4,1fr);margin-top:42px;border-top:3px solid var(--ink)}
+  .four>div{padding:26px 24px 14px;border-left:1px solid var(--line)}
+  .four>div:first-child{padding-left:0;border-left:0}
+  .four .no{font-family:Georgia,"Times New Roman","Liberation Serif",serif;color:var(--accent);font-size:20px}
+  .four h3{font-size:21px;margin-top:8px}
+  .four p{font-size:14.5px;line-height:1.7;color:var(--muted);margin-top:10px;height:76px}
+  .four .num{font-size:56px;margin-top:30px}
+
+  /* P3 图表 */
+  .chartrow{display:grid;grid-template-columns:790px 1fr;gap:36px;margin-top:30px}
+  .notes{border-top:3px solid var(--ink);padding-top:6px}
+  .notes div{padding:15px 0;border-bottom:1px solid var(--line)}
+  .notes b{display:block;font-size:17px}
+  .notes span{display:block;font-size:13.5px;color:var(--muted);line-height:1.6;margin-top:4px}
+  svg text{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+  svg .ax{font-family:Menlo,Consolas,"DejaVu Sans Mono",monospace;font-size:11px;fill:#5E6A73}
+
+  /* P4 每一个仓 */
+  .proof{display:grid;grid-template-columns:560px 1fr;gap:56px;margin-top:40px}
+  .big{display:flex;align-items:baseline;gap:16px}
+  .big .num{font-size:124px;letter-spacing:-.02em}
+  .big .num i{font-style:normal;color:var(--accent)}
+  .dots{display:grid;grid-template-columns:repeat(12,1fr);gap:9px;margin-top:26px;width:560px}
+  .dots i{display:block;height:40px;background:var(--accent)}
+  .dots i.x{background:none;border:1px dashed var(--line)}
+  .cap{font-size:13.5px;color:var(--muted);margin-top:14px;line-height:1.6}
+  .band{border-top:3px solid var(--ink)}
+  .band>div{display:grid;grid-template-columns:190px 1fr;align-items:center;padding:24px 0;border-bottom:1px solid var(--line)}
+  .band .num{font-size:42px}
+  .band b{font-size:16.5px;display:block}
+  .band span{font-size:13px;color:var(--muted);display:block;margin-top:3px;line-height:1.5}
+
+  /* P5 合作 */
+  .mul{margin-top:30px;border-top:3px solid var(--ink)}
+  .mul .row{display:grid;grid-template-columns:1fr 44px 1fr 44px 1.25fr;align-items:center;
+    padding:14px 0;border-bottom:1px solid var(--line)}
+  .mul .head{padding:10px 0;font-family:Menlo,Consolas,"DejaVu Sans Mono",monospace;font-size:10.5px;
+    letter-spacing:.14em;color:var(--muted)}
+  .mul b{font-size:21px;display:block}
+  .mul span{font-size:13.5px;color:var(--muted);display:block;margin-top:4px}
+  .mul .op{font-family:Georgia,"Times New Roman","Liberation Serif",serif;font-size:30px;color:var(--accent);text-align:center}
+  .mul .res{background:var(--hl2);padding:13px 18px}
+  .mul .res b{font-size:19px}
+
+  #nav{position:fixed;right:22px;bottom:16px;display:flex;gap:10px;z-index:99;
+    font-family:Menlo,Consolas,monospace;color:#888;font-size:13px;align-items:center}
+  #nav .btn{width:34px;height:34px;border:1px solid #555;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    color:#ccc;background:rgba(0,0,0,.55)}
+  @media print{
+    @page{size:1280px 720px;margin:0}
+    html,body{height:auto;overflow:visible;background:none}
+    #stage{position:static;width:auto;height:auto;transform:none!important}
+    .slide{display:block!important;position:relative;width:1280px;height:720px;
+      break-after:page;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    #nav{display:none!important}
+  }
+</style></head><body>
+<div id="stage">
+
+  <!-- P1 封面 -->
+  <section class="slide cover active">
+    <div class="top"><span>QISHUANG COLD CHAIN</span><span>PARTNER BRIEFING</span></div>
+    <h1>把冷链仓，<br>开到<span class="hl">县城</span>去。</h1>
+    <div class="sub">栖霜冷链 · 合作交流材料<br><span style="font-size:13px;color:#8496AF">示例 deck：公司、数据与场景均为虚构</span></div>
+    <div class="ghost">−18°</div>
+  </section>
+
+  <!-- P2 为什么是县城 -->
+  <section class="slide">
+    <div class="hd"><span>第一幕 · 立势 / 县域的缺口</span><span class="r">栖霜冷链 · 02</span></div>
+    <div class="tag">WHY COUNTY · 01</div>
+    <h1>为什么是<span class="hl">县城</span>?</h1>
+    <div class="lead">四件事在同一段时间里同时成立。</div>
+    <div class="four">
+      <div><div class="no">01</div><h3>需求已经在那里</h3><p>县域居民在线上买生鲜的习惯已经养成，订单增速高于城市。</p>
+        <div class="num">2.6×</div><div class="lab">县域生鲜订单 · 三年增幅</div></div>
+      <div><div class="no">02</div><h3>供给还是空的</h3><p>冷库集中在地级市，县城多数靠常温车加冰袋凑合。</p>
+        <div class="num">1/5</div><div class="lab">人均冷库容量 · 县域比城市</div></div>
+      <div><div class="no">03</div><h3>建仓成本降下来了</h3><p>模块化冷库和国产制冷机组成熟，小仓第一次算得过账。</p>
+        <div class="num">−38%</div><div class="lab">单仓设备投入 · 五年变化</div></div>
+      <div><div class="no">04</div><h3>同行还没有到</h3><p>头部仓配企业的网络止步于地级市，县一级基本空白。</p>
+        <div class="num">12%</div><div class="lab">头部企业 · 县域覆盖率</div></div>
+    </div>
+    <div class="banner"><span>四个条件同时成立的时间不会长，所以是现在。</span><span class="mono">NEXT · 窗口有多长</span></div>
+    <div class="ft"><span class="m">ACT I</span><span>示例数据，仅作版式演示</span></div>
+  </section>
+
+  <!-- P3 剪刀差 -->
+  <section class="slide">
+    <div class="hd"><span>第一幕 · 立势 / 窗口有多长</span><span class="r">栖霜冷链 · 03</span></div>
+    <div class="tag">TIMING · 02</div>
+    <h1>成本在降，需求在升：<span class="hl">窗口就这几年</span>。</h1>
+    <div class="chartrow">
+      <svg width="790" height="400" viewBox="0 0 790 400">
+        <!-- 坐标：x 2021..2029 → 60..730;y 指数 0..300 → 350..30 -->
+        <rect x="395" y="30" width="251.25" height="320" fill="#EAF0FB"/>
+        <text x="520" y="170" text-anchor="middle" font-size="16" font-weight="700" fill="#1B4BB8">窗口期 · 正当时</text>
+        <g stroke="#D6DADB" stroke-width="1">
+          <line x1="60" y1="350" x2="730" y2="350"/><line x1="60" y1="243.3" x2="730" y2="243.3"/>
+          <line x1="60" y1="136.7" x2="730" y2="136.7"/><line x1="60" y1="30" x2="730" y2="30"/>
+        </g>
+        <g class="ax" text-anchor="end"><text x="50" y="354">0</text><text x="50" y="247">100</text><text x="50" y="141">200</text><text x="50" y="34">300</text></g>
+        <g class="ax" text-anchor="middle">
+          <text x="60" y="372">2021</text><text x="227.5" y="372">2023</text><text x="395" y="372">2025</text>
+          <text x="562.5" y="372">2027</text><text x="730" y="372">2029</text></g>
+        <text x="60" y="394" class="ax">指数，2021 年 = 100 · 2026 年起为预测</text>
+        <line x1="646.25" y1="30" x2="646.25" y2="350" stroke="#14202B" stroke-width="1.2" stroke-dasharray="5 4"/>
+        <text x="654" y="320" font-size="12.5" fill="#14202B">同行跟进，</text>
+        <text x="654" y="336" font-size="12.5" fill="#14202B">优势摊平</text>
+        <!-- 成本：100 92 83 74 66 60 55 51 48 -->
+        <polyline fill="none" stroke="#14202B" stroke-width="3" stroke-linejoin="round"
+          points="60,243.3 143.75,251.9 227.5,261.5 311.25,271.1 395,279.6"/>
+        <polyline fill="none" stroke="#14202B" stroke-width="3" stroke-dasharray="2 5" stroke-linecap="round"
+          points="395,279.6 478.75,286 562.5,291.3 646.25,295.6 730,298.8"/>
+        <!-- 订单：100 118 142 175 215 250 272 285 292 -->
+        <polyline fill="none" stroke="#1B4BB8" stroke-width="3.5" stroke-linejoin="round"
+          points="60,243.3 143.75,224.1 227.5,198.5 311.25,163.3 395,120.7"/>
+        <polyline fill="none" stroke="#1B4BB8" stroke-width="3.5" stroke-dasharray="2 6" stroke-linecap="round"
+          points="395,120.7 478.75,83.3 562.5,59.9 646.25,46 730,38.5"/>
+        <circle cx="395" cy="120.7" r="6" fill="#1B4BB8" stroke="#F7F6F2" stroke-width="2"/>
+        <circle cx="395" cy="279.6" r="6" fill="#14202B" stroke="#F7F6F2" stroke-width="2"/>
+        <text x="383" y="112" text-anchor="end" font-size="14" font-weight="700" fill="#1B4BB8">县域生鲜订单量 215</text>
+        <text x="383" y="304" text-anchor="end" font-size="14" font-weight="700" fill="#14202B">单仓设备成本 66</text>
+        <line x1="395" y1="134" x2="395" y2="266" stroke="#5E6A73" stroke-width="1"/>
+        <text x="403" y="205" font-size="12.5" fill="#5E6A73">现在 · 2025</text>
+      </svg>
+      <div class="notes">
+        <div><b>两条线从同一点出发</b><span>2021 年都是 100。五年后一条到 215，一条到 66，张口就是利润空间。</span></div>
+        <div><b>窗口大约三年</b><span>设备降价对所有人生效。预计 2028 年前后同行大规模进县，先发优势被摊平。</span></div>
+        <div><b>先到的人留下什么</b><span>仓址、本地司机和商户关系。这三样晚到的人花钱也难补。</span></div>
+      </div>
+    </div>
+    <div class="ft"><span class="m">ACT I</span><span>示例数据，仅作版式演示</span></div>
+  </section>
+
+  <!-- P4 每一个仓 -->
+  <section class="slide">
+    <div class="hd"><span>第二幕 · 立信 / 运营实绩</span><span class="r">栖霜冷链 · 04</span></div>
+    <div class="tag">OPERATIONS · 03</div>
+    <h1>不是样板仓，是<span class="hl">每一个仓</span>。</h1>
+    <div class="proof">
+      <div>
+        <div class="big"><div class="num">47<i>/</i>47</div><div style="font-size:17px;font-weight:600;line-height:1.5">在营仓<br>全部达标</div></div>
+        <div class="dots" id="dots"></div>
+        <div class="cap">每一格是一个在营县域仓。连续 12 个月，逐月通过第三方温控审计，没有一格缺席。</div>
+      </div>
+      <div class="band">
+        <div><div class="num">99.4%</div><div><b>全程温控达标率</b><span>入库、存储、出库、在途四段全量记录，非抽检</span></div></div>
+        <div><div class="num">12 个月</div><div><b>连续运行，零断链事故</b><span>含一个夏季用电高峰和一个春节订单高峰</span></div></div>
+        <div><div class="num">3.8 h</div><div><b>下单到出库的平均时长</b><span>支撑县城当日达、乡镇次日达</span></div></div>
+        <div><div class="num">3 项</div><div><b>可现场查验的资质</b><span>冷链物流服务认证 · 食品安全管理体系认证 · 月度温控审计报告</span></div></div>
+      </div>
+    </div>
+    <div class="ft"><span class="m">ACT II</span><span>示例数据，仅作版式演示</span></div>
+  </section>
+
+  <!-- P5 合作 -->
+  <section class="slide">
+    <div class="hd"><span>第三幕 · 合作 / 我们能一起做什么</span><span class="r">栖霜冷链 · 05</span></div>
+    <div class="tag">PARTNERSHIP · 04</div>
+    <h1>贵方的门店，<span class="hl">乘以</span>我们的仓。</h1>
+    <div class="mul">
+      <div class="row head"><div>贵方已有的</div><div></div><div>我方已有的</div><div></div><div>合在一起</div></div>
+      <div class="row"><div><b>县域门店网络</b><span>已覆盖的县城与乡镇门店</span></div><div class="op">×</div>
+        <div><b>县域前置冷仓</b><span>离门店 30 公里以内</span></div><div class="op">=</div>
+        <div class="res"><b>生鲜次日达铺到乡镇</b><span>门店不用自建冷库</span></div></div>
+      <div class="row"><div><b>稳定的采购量</b><span>可预测的周度订货</span></div><div class="op">×</div>
+        <div><b>干线整车调度</b><span>产地到县仓直发</span></div><div class="op">=</div>
+        <div class="res"><b>单件履约成本下降</b><span>拼车变整车，少一次中转</span></div></div>
+      <div class="row"><div><b>会员与销售数据</b><span>知道每家店卖什么</span></div><div class="op">×</div>
+        <div><b>仓内补货模型</b><span>按店、按天预测</span></div><div class="op">=</div>
+        <div class="res"><b>生鲜损耗率下降</b><span>少备货，少报损</span></div></div>
+    </div>
+    <div class="banner"><span>先从一个县、三家门店试起，90 天后用数据决定下一步。</span><span class="mono">FIRST STEP</span></div>
+    <div class="ft"><span class="m">ACT III</span><span>示例内容，仅作版式演示</span></div>
+  </section>
+
+  <!-- P6 封底 -->
+  <section class="slide cover">
+    <div class="top"><span>QISHUANG COLD CHAIN</span><span>THANK YOU</span></div>
+    <h1>县城的冷链，<br>我们<span class="hl">一起先到</span>。</h1>
+    <div class="sub">栖霜冷链 · 合作交流材料<br><span style="font-size:13px;color:#8496AF">hello@example.com · 示例 deck，内容均为虚构</span></div>
+    <div class="ghost">−18°</div>
+  </section>
+
+</div>
+<div id="nav"><div class="btn" onclick="go(-1)">&lsaquo;</div><span id="pg"></span><div class="btn" onclick="go(1)">&rsaquo;</div></div>
+<script>
+  const d=document.getElementById('dots');
+  for(let i=0;i<48;i++){const e=document.createElement('i');if(i===47)e.className='x';d.appendChild(e)}
+  const slides=[...document.querySelectorAll('.slide')];let cur=0;
+  function show(i){cur=Math.max(0,Math.min(slides.length-1,i));
+    slides.forEach((s,j)=>s.classList.toggle('active',j===cur));
+    document.getElementById('pg').textContent=(cur+1)+' / '+slides.length}
+  function go(d){show(cur+d)}
+  addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key))go(1);
+    if(['ArrowLeft','PageUp'].includes(e.key))go(-1);
+    if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1)});
+  addEventListener('click',e=>{if(e.target.closest('#nav'))return;
+    go(e.clientX>innerWidth/2?1:-1)});
+  function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);
+    document.getElementById('stage').style.transform=`translate(-50%,-50%) scale(${s})`}
+  addEventListener('resize',fit);fit();show(0);
+</script></body></html>

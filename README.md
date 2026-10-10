@@ -9,6 +9,18 @@
 
 *English summary below.*
 
+## 效果
+
+![示例 deck 六页总览](examples/coldchain-demo/overview.png)
+
+这是一套六页的示例 deck：一家**虚构的**县域冷链公司向区域商超谈合作，公司、数据和场景都是编的，只用来展示成品的样子。完整文件在 [`examples/coldchain-demo/`](examples/coldchain-demo/)，其中 `deck.html` 下载后用浏览器打开即可翻页，`deck.pdf` 由仓库里的导出脚本生成。
+
+| 图表的形状就是结论 | 证据贴着主张 |
+|---|---|
+| ![剪刀差图表页](examples/coldchain-demo/shots/p03.png) | ![运营实绩页](examples/coldchain-demo/shots/p04.png) |
+
+示例是直接按审美律做出来的，没有走访谈和比稿，所以它展示的是页面工艺，流程的价值要自己用一次才看得到。
+
 ## 它做什么
 
 | 阶段 | 做什么 | 过关条件 |
@@ -74,6 +86,7 @@ skills/slide-craft/
     ├── export_pdf.py            HTML → PDF
     ├── extract_pptx.py          旧 PPT 的文字与图片提取
     └── requirements.txt
+examples/coldchain-demo/         示例 deck（虚构场景）：HTML、PDF、逐页截图
 ```
 
 脚本也可以脱离 skill 单独使用：
@@ -106,4 +119,5 @@ python scripts/extract_pptx.py old.pptx
 - **It is deliberately slow.** Every stage waits for your sign-off, and pages are reviewed one at a time.
 - The skill text is written in Chinese; it works for decks in any language, but the instructions and examples are Chinese.
 - The full workflow needs a shell, Python 3.9+, and headless Chromium (`pip install -r scripts/requirements.txt && python -m playwright install chromium`). Without a shell, stages 1-3 work as-is and stages 4-5 fall back to you opening the HTML and printing to PDF from the browser.
+- A six-page sample deck (fictional company and data) is in `examples/coldchain-demo/`.
 - License: MIT for code, CC BY 4.0 for the methodology text.
